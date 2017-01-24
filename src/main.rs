@@ -1,6 +1,11 @@
 use std::io;
 use std::process;
 
+struct Node {
+	child	: Vec<Node>,
+	terrain	: [[char;3];3],
+}
+
 fn print_terrain(terrain : &[[char;3];3]) {
 	println!("-------------");
 	for line in terrain.iter() {
@@ -45,7 +50,7 @@ fn play(terrain : &mut [[char;3];3], x : usize, y : usize, player : &mut char){
 	}
 }
 
-fn ia_play(terrain : &mut [[char;3];3]){
+fn ai_play(terrain : &mut [[char;3];3]){
 	println!("L'IA joue ...");
 }
 
@@ -98,13 +103,19 @@ fn choose_mod(play_mod : &mut bool){
 	*play_mod = match input.trim() {
 	    "s" => false,
 		"m"	=> true,
-		_ => return choose_mod(play_mod),
+		_	=> return choose_mod(play_mod),
 	};
+}
+
+fn ai_calculate(node : &mut Node){
 }
 
 fn main() {
 	let mut terrain = [[' ';3];3];
 	let mut player = 'X';
+
+	let mut ai_data = Node{child : Vec::new(), terrain : terrain};
+	ai_calculate(&mut ai_data);
 
 	let mut play_mod = false;
 	choose_mod(&mut play_mod);
@@ -115,7 +126,11 @@ fn main() {
 		let (x, y)  = input();
 		play(&mut terrain, x, y, &mut player);
 		if play_mod {
-			ia_play(&mut terrain);
+			ai_play(&mut terrain);
 		}
 	}
 }
+
+// TODO End it
+// Maybe add a return value to ai_calculate with recursivity
+// Add a previous Node parameter that can be used to search back for data
