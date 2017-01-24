@@ -1,0 +1,6 @@
+[package]
+name = "morpion"
+version = "0.1.0"
+authors = ["Swarthon <swarthon.gokan@gmail.com>"]
+
+[dependencies]
