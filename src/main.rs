@@ -107,15 +107,35 @@ fn choose_mod(play_mod : &mut bool){
 	};
 }
 
-fn ai_calculate(node : &mut Node){
+fn ai_begin() -> Node{
+	let terrain = [[' ';3];3];
+	let v : Vec<Node> = Vec::new();
+	let mut n = Node {terrain : terrain, child : v};
+	for p in 0..10 {
+		let child = ai_calculate_node(&n.terrain, p);
+		n.child.push(child);
+	}
+	n
+}
+fn ai_add_point(terrain : &mut [[char;3];3], u : u8){
+}
+fn ai_calculate_node(terrain : &[[char;3];3], u : u8) -> Node{
+	let mut t = *terrain;
+	let v : Vec<Node> = Vec::new();
+	ai_add_point(&mut t,u);
+	let mut n = Node {terrain : t, child : v};
+	for p in 0..10 {
+		let child = ai_calculate_node(&n.terrain, p);
+		n.child.push(child);
+	}
+	n
 }
 
 fn main() {
 	let mut terrain = [[' ';3];3];
 	let mut player = 'X';
 
-	let mut ai_data = Node{child : Vec::new(), terrain : terrain};
-	ai_calculate(&mut ai_data);
+	let ai_date = ai_begin();
 
 	let mut play_mod = false;
 	choose_mod(&mut play_mod);
@@ -132,5 +152,6 @@ fn main() {
 }
 
 // TODO End it
-// Maybe add a return value to ai_calculate with recursivity
-// Add a previous Node parameter that can be used to search back for data
+// Do the ai_add_point function which modify the terrain to add a point
+// Use play function in it to modify the terrain
+// Warning : The function will have number [0;9] but some cases will already be full
