@@ -4,6 +4,10 @@ use std::process;
 struct Node {
 	child	: Vec<Node>,
 	terrain	: [[char;3];3],
+	player	: char,
+	x_win	: i64,
+	o_win	: i64,
+	play	: (usize,usize)
 }
 
 fn print_terrain(terrain : &[[char;3];3]) {
@@ -37,9 +41,9 @@ fn read_case(msg : &str) -> usize {
 	case - 1
 }
 
-fn play(terrain : &mut [[char;3];3], x : usize, y : usize, player : &mut char){
+fn play(terrain : &mut [[char;3];3], x : usize, y : usize, player : &mut char) -> bool{
 	if terrain[y][x] != ' ' {
-		return;
+		return false;
 	}
 	terrain[y][x] = *player;
 	if *player == 'X' {
@@ -48,28 +52,51 @@ fn play(terrain : &mut [[char;3];3], x : usize, y : usize, player : &mut char){
 	else {
 		*player = 'X';
 	}
+	true
 }
 
-fn ai_play(terrain : &mut [[char;3];3]){
-	println!("L'IA joue ...");
+fn ai_play<'a>(terrain : &mut [[char;3];3], n : &'a Node, player : &mut char) -> &'a Node {
+	let mut case = 0;
+	for i in 0..n.child.len() {
+		println!("{} {} {}", n.child[i].o_win, n.child[i].x_win, i);
+		if *player == 'X' && n.child[i].o_win < n.child[case].o_win {
+			case = i;
+		}
+		if *player == 'X' && n.child[i].o_win == n.child[case].o_win {
+			if n.child[i].x_win > n.child[case].x_win {
+				case = i;
+			}
+		}
+		if *player == 'O' && n.child[i].x_win < n.child[case].x_win {
+			case = i;
+		}
+		if *player == 'O' && n.child[i].x_win == n.child[case].x_win {
+			if n.child[i].o_win > n.child[case].o_win {
+				case = i;
+			}
+		}
+	}
+	println!("{}", case);
+	play(terrain, n.child[case].play.0, n.child[case].play.1, player);
+	return &n.child[case];
 }
 
-fn test_win(terrain : &[[char;3];3]){
+fn test_win(terrain : &[[char;3];3]) -> char {
 	for line in terrain {
 		if line[0] == line[1] && line[0] == line[2] && line[0] != ' ' {
-			win(line[0]);
+			return line[0];
 		}
 	}
 	for y in 0..terrain.len() {
 		if terrain[0][y] == terrain[1][y] && terrain[0][y] == terrain[2][y] && terrain[0][y] != ' ' {
-			win(terrain[0][y]);
+			return terrain[0][y];
 		}
 	}
 	if terrain[0][0] == terrain[1][1] && terrain[0][0] == terrain[2][2]  && terrain[0][0] != ' '{
-		win(terrain[0][0]);
+		return terrain[0][0];
 	}
 	if terrain[0][2] == terrain[1][1] && terrain[0][2] == terrain[2][0]  && terrain[0][2] != ' '{
-		win(terrain[0][2]);
+		return terrain[0][2];
 	}
 
 	let mut is_end : bool = true;
@@ -81,9 +108,19 @@ fn test_win(terrain : &[[char;3];3]){
 		}
 	}
 	if is_end {
+		return '0';
+	}
+	' '
+}
+fn test_win_with_end(terrain : &[[char;3];3]){
+	if test_win(terrain) == '0'{
+		print_terrain(terrain);
 		end();
 	}
-
+	if test_win(terrain) == 'X' || test_win(terrain) == 'O'{
+		print_terrain(terrain);
+		win(test_win(terrain));
+	}
 }
 
 fn win(player : char){
@@ -97,7 +134,7 @@ fn end(){
 
 fn choose_mod(play_mod : &mut bool){
 	let mut input = String::new();
-	println!("Comment voulez vous jouez ?\n\tSolo (s)\tMultijoueur (m)");
+	println!("Comment voulez vous jouer ?\n\tSolo (s)\tMultijoueur (m)");
 	io::stdin().read_line(&mut input)
 		.expect("failed to read line");
 	*play_mod = match input.trim() {
@@ -110,48 +147,90 @@ fn choose_mod(play_mod : &mut bool){
 fn ai_begin() -> Node{
 	let terrain = [[' ';3];3];
 	let v : Vec<Node> = Vec::new();
-	let mut n = Node {terrain : terrain, child : v};
-	for p in 0..10 {
-		let child = ai_calculate_node(&n.terrain, p);
+	let mut n = Node {terrain : terrain, child : v, player : 'X', x_win : 0, o_win : 0, play : (0,0)};
+	for p in 0..9 {
+		let child = ai_calculate_node(&n.terrain, &n.player, p);
+		n.x_win += child.x_win;
+		n.o_win += child.o_win;
 		n.child.push(child);
 	}
 	n
 }
-fn ai_add_point(terrain : &mut [[char;3];3], u : u8){
+fn ai_add_point(n : &mut Node, u : u8) -> bool{
+	let x : usize = (u % 3) as usize;
+	let y : usize = (u / 3) as usize;
+
+	if n.terrain[y][x] != ' ' {
+		return true;
+	}
+	else {
+		n.terrain[y][x] = n.player;
+		n.play = (x,y);
+		let res = test_win(&n.terrain);
+		if res == 'O' {
+			n.o_win += 1;
+			return true;
+		}
+		else if res == 'X' {
+			n.x_win += 1;
+			return true;
+		}
+		else if res == '0' {
+			return true;
+		}
+	}
+	false
 }
-fn ai_calculate_node(terrain : &[[char;3];3], u : u8) -> Node{
-	let mut t = *terrain;
-	let v : Vec<Node> = Vec::new();
-	ai_add_point(&mut t,u);
-	let mut n = Node {terrain : t, child : v};
-	for p in 0..10 {
-		let child = ai_calculate_node(&n.terrain, p);
-		n.child.push(child);
+fn ai_calculate_node(terrain : &[[char;3];3], player : &char, u : u8) -> Node{
+	let mut n = Node {terrain : *terrain, child : Vec::new(), player : *player, x_win : 0, o_win : 0, play : (0,0)};
+	let b = ai_add_point(&mut n, u);
+	if b {
+		return n;
+	}
+	for p in 0..9 {
+		let child = ai_calculate_node(&n.terrain, &match n.player {'X'	=> 'O', 'O'	=> 'X', _ => 'X'}, p);
+		if child.terrain != n.terrain {
+			n.x_win += child.x_win;
+			n.o_win += child.o_win;
+			n.child.push(child);
+		}
 	}
 	n
+}
+fn update_ai<'a>(x : usize, y : usize, n : &'a Node) -> &'a Node{
+	let mut played_case = 0;
+	for i in 0..n.child.len(){
+		if n.child[i].play == (x,y){
+			played_case = i;
+		}
+	}
+	&n.child[played_case]
 }
 
 fn main() {
 	let mut terrain = [[' ';3];3];
 	let mut player = 'X';
 
-	let ai_date = ai_begin();
-
 	let mut play_mod = false;
 	choose_mod(&mut play_mod);
 
+	let mut ai_data : Node = Node {terrain : terrain, child : Vec::new(), player : player, x_win : 0, o_win : 0, play : (0,0)};
+	if play_mod {
+		ai_data = ai_begin();
+	}
+	let mut ai_actual_node = vec!(&ai_data);
+
 	loop {
 		print_terrain(&terrain);
-		test_win(&terrain);
 		let (x, y)  = input();
-		play(&mut terrain, x, y, &mut player);
-		if play_mod {
-			ai_play(&mut terrain);
+		let played = play(&mut terrain, x, y, &mut player);
+		test_win_with_end(&terrain);
+		if play_mod && played {
+			let n = update_ai(x,y, &ai_actual_node[ai_actual_node.len()-1]);
+			print_terrain(&n.terrain);
+			let n = ai_play(&mut terrain, &n, &mut player);
+			ai_actual_node.push(n);
 		}
+		test_win_with_end(&terrain);
 	}
 }
-
-// TODO End it
-// Do the ai_add_point function which modify the terrain to add a point
-// Use play function in it to modify the terrain
-// Warning : The function will have number [0;9] but some cases will already be full
