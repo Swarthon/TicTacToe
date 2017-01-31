@@ -1,5 +1,8 @@
+extern crate rand;
+
 use std::io;
 use std::process;
+use rand::Rng;
 
 struct Node {
 	child	: Vec<Node>,
@@ -10,6 +13,12 @@ struct Node {
 	play	: (usize,usize)
 }
 
+fn swap_player(player : &char) -> char{
+	match *player {
+		'X'	=> 'O',
+		_	=> 'X'
+	}
+}
 fn print_terrain(terrain : &[[char;3];3]) {
 	println!("-------------");
 	for line in terrain.iter() {
@@ -46,19 +55,13 @@ fn play(terrain : &mut [[char;3];3], x : usize, y : usize, player : &mut char) -
 		return false;
 	}
 	terrain[y][x] = *player;
-	if *player == 'X' {
-		*player = 'O';
-	}
-	else {
-		*player = 'X';
-	}
+	*player = swap_player(player);
 	true
 }
 
 fn ai_play<'a>(terrain : &mut [[char;3];3], n : &'a Node, player : &mut char) -> &'a Node {
 	let mut case = 0;
 	for i in 0..n.child.len() {
-		println!("{} {} {}", n.child[i].o_win, n.child[i].x_win, i);
 		if *player == 'X' && n.child[i].o_win < n.child[case].o_win {
 			case = i;
 		}
@@ -76,7 +79,6 @@ fn ai_play<'a>(terrain : &mut [[char;3];3], n : &'a Node, player : &mut char) ->
 			}
 		}
 	}
-	println!("{}", case);
 	play(terrain, n.child[case].play.0, n.child[case].play.1, player);
 	return &n.child[case];
 }
@@ -132,22 +134,22 @@ fn end(){
 	process::exit(0);
 }
 
-fn choose_mod(play_mod : &mut bool){
+fn choose_mod() -> bool{
 	let mut input = String::new();
 	println!("Comment voulez vous jouer ?\n\tSolo (s)\tMultijoueur (m)");
 	io::stdin().read_line(&mut input)
 		.expect("failed to read line");
-	*play_mod = match input.trim() {
+	match input.trim() {
 	    "s" => false,
 		"m"	=> true,
-		_	=> return choose_mod(play_mod),
-	};
+		_	=> return choose_mod(),
+	}
 }
 
-fn ai_begin() -> Node{
+fn ai_begin(player : &char) -> Node{
 	let terrain = [[' ';3];3];
 	let v : Vec<Node> = Vec::new();
-	let mut n = Node {terrain : terrain, child : v, player : 'X', x_win : 0, o_win : 0, play : (0,0)};
+	let mut n = Node {terrain : terrain, child : v, player : *player, x_win : 0, o_win : 0, play : (0,0)};
 	for p in 0..9 {
 		let child = ai_calculate_node(&n.terrain, &n.player, p);
 		n.x_win += child.x_win;
@@ -188,7 +190,7 @@ fn ai_calculate_node(terrain : &[[char;3];3], player : &char, u : u8) -> Node{
 		return n;
 	}
 	for p in 0..9 {
-		let child = ai_calculate_node(&n.terrain, &match n.player {'X'	=> 'O', 'O'	=> 'X', _ => 'X'}, p);
+		let child = ai_calculate_node(&n.terrain, &swap_player(player), p);
 		if child.terrain != n.terrain {
 			n.x_win += child.x_win;
 			n.o_win += child.o_win;
@@ -209,14 +211,13 @@ fn update_ai<'a>(x : usize, y : usize, n : &'a Node) -> &'a Node{
 
 fn main() {
 	let mut terrain = [[' ';3];3];
-	let mut player = 'X';
+	let mut player = match rand::thread_rng().gen_range(0, 2){0 => 'O', _ => 'X'};
 
-	let mut play_mod = false;
-	choose_mod(&mut play_mod);
+	let play_mod = choose_mod();
 
 	let mut ai_data : Node = Node {terrain : terrain, child : Vec::new(), player : player, x_win : 0, o_win : 0, play : (0,0)};
 	if play_mod {
-		ai_data = ai_begin();
+		ai_data = ai_begin(&player);
 	}
 	let mut ai_actual_node = vec!(&ai_data);
 
@@ -227,7 +228,6 @@ fn main() {
 		test_win_with_end(&terrain);
 		if play_mod && played {
 			let n = update_ai(x,y, &ai_actual_node[ai_actual_node.len()-1]);
-			print_terrain(&n.terrain);
 			let n = ai_play(&mut terrain, &n, &mut player);
 			ai_actual_node.push(n);
 		}
