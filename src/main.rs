@@ -1,8 +1,10 @@
 extern crate rand;
+extern crate clap;
 
 use std::io;
 use std::process;
 use rand::Rng;
+use clap::{App,Arg};
 
 struct Node {
 	child	: Vec<Node>,
@@ -147,6 +149,7 @@ fn choose_mod() -> bool{
 }
 
 fn ai_begin(player : &char) -> Node{
+	println!("Calcul des possibilités en cours ...");
 	let terrain = [[' ';3];3];
 	let v : Vec<Node> = Vec::new();
 	let mut n = Node {terrain : terrain, child : v, player : *player, x_win : 0, o_win : 0, play : (0,0)};
@@ -210,10 +213,33 @@ fn update_ai<'a>(x : usize, y : usize, n : &'a Node) -> &'a Node{
 }
 
 fn main() {
+	let matches = App::new("Jeu de Morpion")
+						.version("0.1.1")
+	            		.author("Swarthon <swarthon.gokan@gmail.com>")
+	                	.about("Jeu de Morpion | Tic Tac Toe Game")
+						.arg(Arg::with_name("solo")
+	                    	.short("s")
+	                    	.long("solo")
+							.help("Play a solo game"))
+	 	                .arg(Arg::with_name("multiplayer")
+	 	        			.short("m")
+	 	            		.long("mulitplayer")
+							.help("Play a multiplayer game"))
+	                	.get_matches();
+
 	let mut terrain = [[' ';3];3];
 	let mut player = match rand::thread_rng().gen_range(0, 2){0 => 'O', _ => 'X'};
 
-	let play_mod = choose_mod();
+	let mut play_mod = false;
+	if matches.is_present("solo") {
+		play_mod = false;
+	}
+	else if matches.is_present("multiplayer") {
+		play_mod = true;
+	}
+	else {
+		play_mod = choose_mod();
+	}
 
 	let mut ai_data : Node = Node {terrain : terrain, child : Vec::new(), player : player, x_win : 0, o_win : 0, play : (0,0)};
 	if play_mod {
