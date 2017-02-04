@@ -1,11 +1,21 @@
+/// Enable the basic stuff coming from basic.rs which provide some basic functions as play and print_terrain
 use basic::*;
 
+/// Struct representing a Node
+///
+/// The more basic part of the tree of plays composing the Tic Tac Toe Game
 pub struct Node {
+	/// All the next Nodes
 	pub child	: Vec<Node>,
+	/// The actual terrain
 	pub terrain	: [[char;3];3],
+	/// The player who played at last
 	pub player	: char,
+	/// The number of wins for X
 	pub x_win	: i64,
+	/// The number of wins for O
 	pub o_win	: i64,
+	/// The last play which creates this Node
 	pub play	: (usize,usize)
 }
 
@@ -57,7 +67,7 @@ pub fn ai_begin(player : &char) -> Node{
 ///
 /// Take the actual Node `n` and the actual case `u`
 ///
-/// `u` is exprimed in the format "y * 3 + x" and is included between 0 and 9
+/// `u` is exprimed in the format `y * 3 + x` and is included between 0 and 9
 pub fn ai_add_point(n : &mut Node, u : u8) -> bool{
 	let x : usize = (u % 3) as usize;
 	let y : usize = (u / 3) as usize;
@@ -88,7 +98,7 @@ pub fn ai_add_point(n : &mut Node, u : u8) -> bool{
 ///
 /// Take the actual `terrain`, the actual `player` and the actual case `u`
 ///
-/// `u` is exprimed in the format "y * 3 + x" and is included between 0 and 9
+/// `u` is exprimed in the format `y * 3 + x` and is included between 0 and 9
 pub fn ai_calculate_node(terrain : &[[char;3];3], player : &char, u : u8) -> Node{
 	let mut n = Node {terrain : *terrain, child : Vec::new(), player : *player, x_win : 0, o_win : 0, play : (0,0)};
 	let b = ai_add_point(&mut n, u);
