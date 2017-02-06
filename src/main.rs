@@ -1,29 +1,18 @@
 extern crate rand;
 extern crate clap;
 
-pub mod input;
-use input::*;
-pub mod basic;
-use basic::*;
-pub mod ai;
-use ai::*;
+// piston
+#[macro_use]
+extern crate conrod;
+extern crate find_folder;
 
-use std::io;
-use rand::Rng;
+mod input;
+mod basic;
+mod ai;
+mod graphics;
+mod text;
+
 use clap::{App,Arg};
-
-/// Return either true if it is a multiplayer game or false if it is a singleplayer game
-fn choose_mod() -> bool{
-	let mut input = String::new();
-	println!("Comment voulez vous jouer ?\n\tSolo (s)\tMultijoueur (m)");
-	io::stdin().read_line(&mut input)
-		.expect("failed to read line");
-	match input.trim() {
-		"s" => false,
-		"m" => true,
-		_   => return choose_mod(),
-	}
-}
 
 fn main() {
 	let matches = App::new("Jeu de Morpion")
@@ -52,48 +41,12 @@ fn main() {
 			.conflicts_with("text"))
 	        .get_matches();
 
-	let mut terrain = [[' ';3];3];
-	let mut player = match rand::thread_rng().gen_range(0, 2){0 => 'O', _ => 'X'};
-
-	// Choose the mode
-	let play_mode;
-	if matches.is_present("solo") {
-		play_mode = false;
-	}
-	else if matches.is_present("multiplayer") {
-		play_mode = true;
+	if matches.is_present("graphics") {
+		graphics::main();
 	}
 	else {
-		play_mode = choose_mod();
+		text::main(matches);
 	}
-	// ---
 
-	// Initialize the AI data
-	let mut ai_data : Node = Node {terrain : terrain, child : Vec::new(), player : player, x_win : 0, o_win : 0, play : (0,0)};
-	if play_mode {
-		ai_data = ai_begin(&player);
-	}
-	let mut ai_actual_node = vec!(&ai_data);
-	// ---
 
-	// Game loop
-	loop {
-		print_terrain(&terrain);
-
-		// Player
-		let (x, y) = input();
-		let played = play(&mut terrain, x, y, &mut player);
-		test_win_with_end(&terrain);
-		// ---
-
-		// AI
-		if play_mode && played {
-			let n = ai_update(x,y, &ai_actual_node[ai_actual_node.len()-1]);
-			let n = ai_play(&mut terrain, &n, &mut player);
-			ai_actual_node.push(n);
-			test_win_with_end(&terrain);
-		}
-		// ---
-	}
-	// ---
 }

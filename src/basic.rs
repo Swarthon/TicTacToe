@@ -54,11 +54,8 @@ pub fn print_terrain(terrain : &[[char;3];3]) {
 /// Return who won
 ///
 ///	- 'X' if X won
-///
 ///	- 'O' if O won
-///
 ///	- ' ' if the game isn't over
-///
 ///	- '0' if no one won but the game is over
 ///
 /// Take the actual `terrain`

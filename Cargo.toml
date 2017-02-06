@@ -4,5 +4,8 @@ version = "0.1.1"
 authors = ["Swarthon <swarthon.gokan@gmail.com>"]
 
 [dependencies]
-rand = "0.3.0"
-clap = "2"
+clap				= "*"
+piston_window			= "*"
+conrod				= {version="0.49",features=["piston","piston2d-graphics", "glium"]}
+rand 				= "*"
+find_folder 			= "*"
