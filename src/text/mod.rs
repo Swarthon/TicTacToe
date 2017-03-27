@@ -27,10 +27,10 @@ pub fn main(matches : clap::ArgMatches){
 	// Choose the mode
 	let play_mode;
 	if matches.is_present("solo") {
-		play_mode = false;
+		play_mode = true;
 	}
 	else if matches.is_present("multiplayer") {
-		play_mode = true;
+		play_mode = false;
 	}
 	else {
 		play_mode = choose_mod();
@@ -42,7 +42,7 @@ pub fn main(matches : clap::ArgMatches){
 	if play_mode {
 		ai_data = ai::begin(&player);
 	}
-	let mut ai_actual_node = vec!(&ai_data);
+	let mut ai_played_node = Vec::new();
 	// ---
 
 	// Game loop
@@ -57,9 +57,10 @@ pub fn main(matches : clap::ArgMatches){
 
 		// AI
 		if play_mode && played {
-			let n = ai::update(x,y, &ai_actual_node[ai_actual_node.len()-1]);
-			let n = ai::play(&mut terrain, &n, &mut player);
-			ai_actual_node.push(n);
+			let u = ai::update(x,y, &ai::get_node(&ai_data, &ai_played_node));
+			ai_played_node.push(u);
+			let u = ai::play(&mut terrain, &ai::get_node(&ai_data, &ai_played_node), &mut player);
+			ai_played_node.push(u);
 			basic::test_win_with_end(&terrain);
 		}
 		// ---

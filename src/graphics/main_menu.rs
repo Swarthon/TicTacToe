@@ -2,7 +2,13 @@ use conrod;
 use graphics;
 use ai;
 
-pub fn update(windows : &conrod::backend::piston::Window, ids : &graphics::Ids, ui : &mut conrod::Ui, state : &mut graphics::State){
+pub fn update(	windows : &conrod::backend::piston::Window,
+		ids : &graphics::Ids,
+		ui : &mut conrod::Ui,
+		state : &mut graphics::State,
+		node : &mut ai::Node,
+		played_node : &mut Vec<usize>) {
+
 	use conrod::{Widget, color, Positionable, Sizeable, Labelable, Colorable};
 	use conrod::widget::{Canvas, Button, Text};
 
@@ -31,7 +37,9 @@ pub fn update(windows : &conrod::backend::piston::Window, ids : &graphics::Ids, 
 		.label("Multiplayer")
 		.set(ids.multiplayer, &mut ui)
 	{
-		*state = graphics::State::Multiplayer('X', [[' ';3];3], ai::Node {terrain : [[' ';3];3], child : Vec::new(), player : 'X', x_win : 0, o_win : 0, play : (0,0)});
+		played_node.clear();
+		*node = ai::begin(&'X');
+		*state = graphics::State::Multiplayer('X',[[' ';3];3]);
 	}
 	Text::new("Tic Tac Toe")
 		.up_from(ids.solo, 40.0)

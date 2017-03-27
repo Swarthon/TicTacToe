@@ -47,7 +47,7 @@ pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, u
 			{
 				let played = basic::play(&mut terrain, x, y, &mut player);
 				match basic::test_win(&terrain){
-					'X'	=> {println!("test"); *state = graphics::State::End('X')},
+					'X'	=> *state = graphics::State::End('X'),
 					'O'	=> *state = graphics::State::End('O'),
 					'0'	=> *state = graphics::State::End(' '),
 					_	=> continue,

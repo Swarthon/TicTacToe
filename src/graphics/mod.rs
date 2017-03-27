@@ -2,6 +2,7 @@ use conrod;
 use find_folder;
 
 use ai;
+use std;
 
 mod main_menu;
 mod solo;
@@ -12,7 +13,7 @@ mod end;
 pub enum State {
 	MainMenu,
 	Solo(char,[[char;3];3]),
-	Multiplayer(char,[[char;3];3], ai::Node),
+	Multiplayer(char,[[char;3];3]),
 	End(char),
 }
 
@@ -49,7 +50,9 @@ pub fn main() {
 	let mut ids = Ids::new(ui.widget_id_generator());
 	ids.case.resize(10, &mut ui.widget_id_generator());
 
-	let mut state = State::MainMenu;
+	let mut state = &mut State::MainMenu;
+	let mut node = &mut ai::Node {terrain : [[' ';3];3], child : Vec::new(), player : 'X', x_win : 0, o_win : 0, play : (0,0)};
+	let mut played_node = Vec::new();
 
 	while let Some(event) = window.next_event(&mut events) {
 		if let Some(e) = piston::window::convert_event(event.clone(), &window) {
@@ -57,14 +60,12 @@ pub fn main() {
         	}
 
 		event.update(|_| {
-			let mut s = State::MainMenu;
-			match state {
-				State::MainMenu					=> main_menu::update(&window, &ids, &mut ui, &mut state),
-				State::Solo(player, terrain)			=> solo::update(&window, &ids, &mut ui, &mut state, player, terrain),
-				State::Multiplayer(player,terrain, ref node)	=> s = multiplayer::update(&window, &ids, &mut ui, player, terrain, node),
-				State::End(winner)				=> end::update(&window, &ids, &mut ui, &mut state, winner),
+			match *state {
+				State::MainMenu					=> main_menu::	update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
+				State::Solo(player, terrain)			=> solo::	update(&window, &ids, &mut ui, &mut state, player, terrain),
+				State::Multiplayer(player,terrain)		=> multiplayer::update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
+				State::End(winner)				=> end::	update(&window, &ids, &mut ui, &mut state, winner),
 			}
-			state = s;
 		});
 
 		window.draw_2d(&event, |c, g| {
