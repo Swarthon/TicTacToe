@@ -66,11 +66,9 @@ pub fn update(	window : &conrod::backend::piston::Window,
 				}
 				if played {
 					let u = ai::update(x,2-y, &ai::get_node(actual_node, &played_node));
-					played_node.push(u);
-					basic::print_terrain(&ai::get_node(actual_node, &played_node).terrain);
+					played_node.push(u);u,n
 					let u = ai::play(&mut terrain, &ai::get_node(actual_node, &played_node), &mut player);
 					played_node.push(u);
-					basic::print_terrain(&terrain);
 					match basic::test_win(&terrain){
 						'X'	=> {*state = graphics::State::End('X'); return},
 						'O'	=> {*state = graphics::State::End('O'); return},
