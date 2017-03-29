@@ -1,6 +1,6 @@
 [root]
-name = "morpion"
-version = "0.1.1"
+name = "TicTacToe"
+version = "0.1.2"
 dependencies = [
  "clap 2.22.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "conrod 0.49.0 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -1,6 +1,6 @@
 [package]
-name = "morpion"
-version = "0.1.1"
+name = "TicTacToe"
+version = "0.1.2"
 authors = ["Swarthon <swarthon.gokan@gmail.com>"]
 
 [dependencies]
