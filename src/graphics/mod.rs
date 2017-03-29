@@ -2,7 +2,6 @@ use conrod;
 use find_folder;
 
 use ai;
-use std;
 
 mod main_menu;
 mod solo;

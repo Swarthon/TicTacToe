@@ -1,4 +1,4 @@
-ImaginationQuest
+TicTacToe
 =========
 
 TicTacToe is a simple Tic Tac Toe game written in Rust.
