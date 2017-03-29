@@ -132,6 +132,9 @@ pub fn update<'a>(x : usize, y : usize, n : &'a Node) -> usize {
 	played_case
 }
 
+/// Return the node following the `path`
+///
+/// Take the root node `parent` and the path to the node `path`
 pub fn get_node<'a>(parent : &'a Node, path : &Vec<usize>) -> &'a Node {
 	if path.len() == 0 {
 		return parent;
