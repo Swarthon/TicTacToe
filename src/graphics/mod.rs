@@ -62,8 +62,8 @@ pub fn main() {
 		event.update(|_| {
 			match *state {
 				State::MainMenu					=> main_menu::	update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
-				State::Solo(player, terrain)			=> solo::	update(&window, &ids, &mut ui, &mut state, player, terrain),
-				State::Multiplayer(player,terrain)		=> multiplayer::update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
+				State::Multiplayer(player, terrain)		=> multiplayer::update(&window, &ids, &mut ui, &mut state, player, terrain),
+				State::Solo(player,terrain)			=> solo::	update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
 				State::End(winner)				=> end::	update(&window, &ids, &mut ui, &mut state, winner),
 			}
 		});

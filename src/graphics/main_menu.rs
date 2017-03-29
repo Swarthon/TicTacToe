@@ -23,26 +23,26 @@ pub fn update(	windows : &conrod::backend::piston::Window,
 		.w_h(150.0, 50.0)
 		.align_label_middle()
 		.label_font_size(20)
-		.label("Solo")
-		.set(ids.solo, &mut ui)
-	{
-		*state = graphics::State::Solo('X', [[' ';3];3]);
-	}
-
-	for _click in Button::new()
-		.down_from(ids.solo, 40.0)
-		.w_h(150.0, 50.0)
-		.align_label_middle()
-		.label_font_size(20)
 		.label("Multiplayer")
 		.set(ids.multiplayer, &mut ui)
 	{
+		*state = graphics::State::Multiplayer('X', [[' ';3];3]);
+	}
+
+	for _click in Button::new()
+		.down_from(ids.multiplayer, 40.0)
+		.w_h(150.0, 50.0)
+		.align_label_middle()
+		.label_font_size(20)
+		.label("Solo")
+		.set(ids.solo, &mut ui)
+	{
 		played_node.clear();
 		*node = ai::begin(&'X');
-		*state = graphics::State::Multiplayer('X',[[' ';3];3]);
+		*state = graphics::State::Solo('X',[[' ';3];3]);
 	}
 	Text::new("Tic Tac Toe")
-		.up_from(ids.solo, 40.0)
+		.up_from(ids.multiplayer, 40.0)
 		.w_h(150.0, 50.0)
 		.font_size(20)
 		.align_text_middle()

@@ -41,11 +41,11 @@ fn main() {
 			.conflicts_with("text"))
 	        .get_matches();
 
-	if matches.is_present("graphics") {
-		graphics::main();
+	if matches.is_present("text") {
+		text::main(matches);
 	}
 	else {
-		text::main(matches);
+		graphics::main();
 	}
 
 

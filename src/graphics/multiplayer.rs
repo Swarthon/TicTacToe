@@ -1,20 +1,8 @@
 use conrod;
 use graphics;
 use basic;
-use ai;
 
-pub fn update(	window : &conrod::backend::piston::Window,
-		ids : &graphics::Ids,
-		ui : &mut conrod::Ui,
-		state : &mut graphics::State,
-		actual_node : &mut ai::Node,
-		played_node : &mut Vec<usize>) {
-
-	let player; let terrain;
-	match *state {
-		graphics::State::Multiplayer(p,t)	=> {player = p; terrain = t},
-		_					=> panic!("The variable state in multiplayer::update() has to be Multiplayer"),
-	}
+pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, ui : &mut conrod::Ui, state : &mut graphics::State, player : char, terrain : [[char;3];3]){
 	use conrod::{Widget, color, Positionable, Sizeable, Colorable, Labelable};
 	use conrod::widget::{Canvas, Text, Button};
 	use conrod::backend::piston::window::Size;
@@ -54,30 +42,20 @@ pub fn update(	window : &conrod::backend::piston::Window,
 				.y(p + h * y as f64 - h * 2 as f64)
 				.align_label_middle()
 				.label_font_size(20)
-				.label(format!("{}", terrain[2-y][x]).as_str())
+				.label(format!("{}", terrain[y][x]).as_str())
 				.set(ids.case[x*3+y], &mut ui)
 			{
-				let played = basic::play(&mut terrain, x, 2-y, &mut player);
+				let played = basic::play(&mut terrain, x, y, &mut player);
 				match basic::test_win(&terrain){
-					'X'	=> {*state = graphics::State::End('X'); return},
-					'O'	=> {*state = graphics::State::End('O'); return},
-					'0'	=> {*state = graphics::State::End(' '); return},
-					_	=> (),
+					'X'	=> *state = graphics::State::End('X'),
+					'O'	=> *state = graphics::State::End('O'),
+					'0'	=> *state = graphics::State::End(' '),
+					_	=> continue,
 				}
-				if played {
-					let u = ai::update(x,2-y, &ai::get_node(actual_node, &played_node));
-					played_node.push(u);u,n
-					let u = ai::play(&mut terrain, &ai::get_node(actual_node, &played_node), &mut player);
-					played_node.push(u);
-					match basic::test_win(&terrain){
-						'X'	=> {*state = graphics::State::End('X'); return},
-						'O'	=> {*state = graphics::State::End('O'); return},
-						'0'	=> {*state = graphics::State::End(' '); return},
-						_	=> (),
-					}
-				}
+				return;
 			}
 		}
 	}
+
 	*state = graphics::State::Multiplayer(player, terrain);
 }

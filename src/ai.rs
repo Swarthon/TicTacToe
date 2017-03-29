@@ -51,7 +51,7 @@ pub fn play<'a>(terrain : &mut [[char;3];3], n : &'a Node, player : &mut char) -
 ///
 /// Take the first `player` to play and generate a tree
 pub fn begin(player : &char) -> Node {
-	println!("Calcul des possibilités en cours ...");
+	println!("Calcul des possibilités en cours ..");
 	let terrain = [[' ';3];3];
 	let v : Vec<Node> = Vec::new();
 	let mut n = Node {terrain : terrain, child : v, player : *player, x_win : 0, o_win : 0, play : (0,0)};
