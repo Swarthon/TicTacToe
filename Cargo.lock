@@ -1,5 +1,5 @@
 [root]
-name = "TicTacToe"
+name = "tic_tac_toe"
 version = "0.1.2"
 dependencies = [
  "clap 2.22.1 (registry+https://github.com/rust-lang/crates.io-index)",

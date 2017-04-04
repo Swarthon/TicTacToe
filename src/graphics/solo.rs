@@ -27,7 +27,7 @@ pub fn update(	window : &conrod::backend::piston::Window,
 		.color(color::WHITE)
 		.set(ids.canvas, &mut ui);
 
-	Text::new(format!("Au tour de {} de jouer", player).as_str())
+	Text::new(format!("It's {}'s turn", player).as_str())
 		.y(size.height as f64 * 1.0 / 4.0)
 		.mid_top_with_margin_on(ids.canvas, (size.height / 10) as f64)
 		.w_h(150.0, 50.0)

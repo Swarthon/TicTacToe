@@ -32,7 +32,7 @@ pub fn main() {
 	use conrod::backend::piston::{self, Window, WindowEvents, OpenGL};
 	use conrod::backend::piston::event::UpdateEvent;
 
-	let mut window: Window = piston::window::WindowSettings::new("Morpion | Tic Tac Toe", [512, 512])
+	let mut window: Window = piston::window::WindowSettings::new("Tic Tac Toe", [512, 512])
         	.opengl(OpenGL::V3_2)
         	.build()
         	.unwrap();
@@ -50,7 +50,7 @@ pub fn main() {
 	ids.case.resize(10, &mut ui.widget_id_generator());
 
 	let mut state = &mut State::MainMenu;
-	let mut node = &mut ai::Node {terrain : [[' ';3];3], child : Vec::new(), player : 'X', x_win : 0, o_win : 0, play : (0,0)};
+	let mut node = &mut ai::Node {terrain : [[' ';3];3], child : Vec::new(), player : 'X', win : ' ', play : (0,0)};
 	let mut played_node = Vec::new();
 
 	while let Some(event) = window.next_event(&mut events) {

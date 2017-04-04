@@ -16,9 +16,9 @@ pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, u
 		.set(ids.canvas, &mut ui);
 
 	let text = match winner {
-		'X'		=> "Le Joueur X a gagné",
-		'O'		=> "Le Joueur O a gagné",
-		_		=> "Match nul",
+		'X'		=> "X won",
+		'O'		=> "O won",
+		_		=> "Equality",
 	};
 
 	Text::new(text)
@@ -34,7 +34,7 @@ pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, u
 		.w_h(150.0, 50.0)
 		.align_label_middle()
 		.label_font_size(20)
-		.label("Rejouer")
+		.label("Play again")
 		.set(ids.replay, &mut ui)
 	{
 		*state = graphics::State::MainMenu;
@@ -44,7 +44,7 @@ pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, u
 		.w_h(150.0, 50.0)
 		.align_label_middle()
 		.label_font_size(20)
-		.label("Quitter")
+		.label("Quit")
 		.set(ids.quit, &mut ui)
 	{
 		process::exit(0);

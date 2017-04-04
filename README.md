@@ -3,6 +3,8 @@ TicTacToe
 
 TicTacToe is a simple Tic Tac Toe game written in Rust.
 
+On [Travis-CI](travis-ci.org) [![Build Status](https://travis-ci.org/Swarthon/TicTacToe.svg?branch=master)](https://travis-ci.org/Swarthon/TicTacToe)
+
 Download
 --------
 

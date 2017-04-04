@@ -15,10 +15,10 @@ mod text;
 use clap::{App,Arg};
 
 fn main() {
-	let matches = App::new("Jeu de Morpion")
+	let matches = App::new("Tic Tac Toe Game")
 		.version("0.1.1")
 		.author("Swarthon <swarthon.gokan@gmail.com>")
-		.about("Jeu de Morpion | Tic Tac Toe Game")
+		.about("Tic Tac Toe Game")
 		.arg(Arg::with_name("solo")
 			.short("s")
 			.long("solo")

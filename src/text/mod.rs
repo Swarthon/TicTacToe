@@ -10,12 +10,12 @@ use input;
 /// Return either true if it is a multiplayer game or false if it is a singleplayer game
 fn choose_mod() -> bool{
 	let mut input = String::new();
-	println!("Comment voulez vous jouer ?\n\tSolo (s)\tMultijoueur (m)");
+	println!("How would you like to play ?\n\tSolo (s)\tMultiplayer (m)");
 	io::stdin().read_line(&mut input)
 		.expect("failed to read line");
 	match input.trim() {
-		"s" => false,
-		"m" => true,
+		"m" => false,
+		"s" => true,
 		_   => return choose_mod(),
 	}
 }
@@ -38,9 +38,9 @@ pub fn main(matches : clap::ArgMatches){
 	// ---
 
 	// Initialize the AI data
-	let mut ai_data : ai::Node = ai::Node {terrain : terrain, child : Vec::new(), player : player, x_win : 0, o_win : 0, play : (0,0)};
+	let mut ai_data : ai::Node = ai::Node {terrain : terrain, child : Vec::new(), player : player, win : ' ', play : (0,0)};
 	if play_mode {
-		ai_data = ai::begin(&player);
+		ai_data = ai::begin(&player, &basic::swap_player(&player));
 	}
 	let mut ai_played_node = Vec::new();
 	// ---

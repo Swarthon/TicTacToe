@@ -15,7 +15,7 @@ pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, u
 		.color(color::WHITE)
 		.set(ids.canvas, &mut ui);
 
-	Text::new(format!("Au tour de {} de jouer", player).as_str())
+	Text::new(format!("It's {}'s turn", player).as_str())
 		.y(size.height as f64 * 1.0 / 4.0)
 		.mid_top_with_margin_on(ids.canvas, (size.height / 10) as f64)
 		.w_h(150.0, 50.0)
@@ -45,7 +45,7 @@ pub fn update(window : &conrod::backend::piston::Window, ids : &graphics::Ids, u
 				.label(format!("{}", terrain[y][x]).as_str())
 				.set(ids.case[x*3+y], &mut ui)
 			{
-				let played = basic::play(&mut terrain, x, y, &mut player);
+				basic::play(&mut terrain, x, y, &mut player);
 				match basic::test_win(&terrain){
 					'X'	=> *state = graphics::State::End('X'),
 					'O'	=> *state = graphics::State::End('O'),
