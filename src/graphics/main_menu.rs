@@ -31,11 +31,11 @@ pub fn update(	windows : &conrod::backend::piston::Window,
 		.set(ids.solo, &mut ui)
 	{
 		played_node.clear();
-		if *node == (ai::Node{terrain : [[' ';3];3], child : Vec::new(), player : 'X', win : ' ', play : (0,0)}) {
-			let player = match rand::thread_rng().gen_range(0, 2){0 => 'O', _ => 'X'};
+		let player = match rand::thread_rng().gen_range(0, 2){0 => 'O', _ => 'X'};
+		if *node == (ai::Node{terrain : [[' ';3];3], child : Vec::new(), player : 'X', win : ' ', play : (0,0)}) || node.player != player {
 			*node = ai::begin(&player, &basic::swap_player(&player));
 		}
-		*state = graphics::State::Solo('X',[[' ';3];3]);
+		*state = graphics::State::Solo(player,[[' ';3];3]);
 	}
 	for _click in Button::new()
 		.down_from(ids.solo, 40.0)
