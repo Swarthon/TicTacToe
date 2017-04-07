@@ -6,6 +6,7 @@ readme = "README.md"
 keywords = ["TicTacToe", "Game"]
 categories = ["games"]
 license = "GPL-3.0"
+description = "TicTacToe is a simple Tic Tac Toe game"
 
 [badges]
 travis-ci = { repository = "https://travis-ci.org/Swarthon/TicTacToe", branch = "master" }
