@@ -16,13 +16,13 @@ pub fn play(terrain : &mut [[char;3];3], x : usize, y : usize, player : &mut cha
 ///
 /// Take the char of the winner
 pub fn win(player : char){
-	println!("Le joueur {} a gagné !!", player);
+	println!("{} player won  !!", player);
 	process::exit(0);
 }
 
 /// Quit after displaying the end message
 pub fn end(){
-	println!("La partie se termine sur un match nul");
+	println!("Equality");
 	process::exit(0);
 }
 

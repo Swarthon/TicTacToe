@@ -1,7 +1,6 @@
 use conrod;
 use graphics;
 use ai;
-use basic;
 use rand;
 use rand::Rng;
 
@@ -32,8 +31,8 @@ pub fn update(	windows : &conrod::backend::piston::Window,
 	{
 		played_node.clear();
 		let player = match rand::thread_rng().gen_range(0, 2){0 => 'O', _ => 'X'};
-		if *node == (ai::Node{terrain : [[' ';3];3], child : Vec::new(), player : 'X', win : ' ', play : (0,0)}) || node.player != player {
-			*node = ai::begin(&player, &basic::swap_player(&player));
+		if *node == (ai::Node::new()) || node.player != player {
+			*node = ai::begin(&player);
 		}
 		*state = graphics::State::Solo(player,[[' ';3];3]);
 	}

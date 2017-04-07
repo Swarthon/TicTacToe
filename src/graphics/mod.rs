@@ -50,7 +50,7 @@ pub fn main() {
 	ids.case.resize(10, &mut ui.widget_id_generator());
 
 	let mut state = &mut State::MainMenu;
-	let mut node = &mut ai::Node {terrain : [[' ';3];3], child : Vec::new(), player : 'X', win : ' ', play : (0,0)};
+	let mut node = ai::Node::new();
 	let mut played_node = Vec::new();
 
 	while let Some(event) = window.next_event(&mut events) {

@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 /// Enable the basic stuff coming from basic.rs which provide some basic functions as play and print_terrain
 use basic;
 
@@ -16,6 +18,49 @@ pub struct Node {
 	pub win 	: char,
 	/// The last play which creates this Node
 	pub play	: (usize,usize)
+}
+
+impl Node {
+	pub fn new() -> Node {
+		Node { child : Vec::new(), terrain : [[' ';3];3], player : 'X', win : ' ', play : (0,0) }
+	}
+}
+
+pub struct NodeBuilder {
+	child	: Vec<Node>,
+	terrain	: [[char;3];3],
+	player	: char,
+	win 	: char,
+	play	: (usize,usize)
+}
+
+impl NodeBuilder {
+	pub fn new () -> NodeBuilder {
+		NodeBuilder { child : Vec::new(), terrain : [[' ';3];3], player : 'X', win : ' ', play : (0,0) }
+	}
+	/*pub fn child (&mut self, vec : Vec<Node>) -> &mut NodeBuilder {
+		self.child = vec;
+		self
+	}*/
+	pub fn terrain (&mut self, terrain : [[char;3];3]) -> &mut NodeBuilder {
+		self.terrain = terrain;
+		self
+	}
+	pub fn player (&mut self, player : char) -> &mut NodeBuilder {
+		self.player = player;
+		self
+	}
+	pub fn win (&mut self, win : char) -> &mut NodeBuilder {
+		self.win = win;
+		self
+	}
+	pub fn play (&mut self, play : (usize,usize)) -> &mut NodeBuilder {
+		self.play = play;
+		self
+	}
+	pub fn finalize(&self) -> Node {
+		Node { child : Vec::new(), terrain : self.terrain, player : self.player, win : self.win, play : self.play }
+	}
 }
 
 /// Return either a `node` is safe for a specific `player`
@@ -67,12 +112,12 @@ pub fn play<'a>(terrain : &mut [[char;3];3], n : &'a Node, player : &mut char) -
 /// Return the first Node of the playing tree
 ///
 /// Take the first `player` to play and generate a tree
-pub fn begin(player : &char, ai : &char) -> Node {
+pub fn begin(player : &char) -> Node {
 	let terrain = [[' ';3];3];
 	let v : Vec<Node> = Vec::new();
 	let mut n = Node {terrain : terrain, child : v, player : *player, win : ' ', play : (0,0)};
 	for p in 0..9 {
-		let child = calculate_node(&n.terrain, &n.player, p, ai);
+		let child = calculate_node(&n.terrain, &n.player, p);
 		n.child.push(child);
 	}
 	n
@@ -107,14 +152,14 @@ pub fn add_point(n : &mut Node, u : u8) -> bool{
 /// Take the actual `terrain`, the actual `player` and the actual case `u`
 ///
 /// `u` is exprimed in the format `y * 3 + x` and is included between 0 and 9
-pub fn calculate_node(terrain : &[[char;3];3], player : &char, u : u8, ai : &char) -> Node {
+pub fn calculate_node(terrain : &[[char;3];3], player : &char, u : u8) -> Node {
 	let mut n = Node {terrain : *terrain, child : Vec::new(), player : *player, win : ' ', play : (0,0)};
 	let b = add_point(&mut n, u);
 	if b {
 		return n;
 	}
 	for p in 0..9 {
-		let child = calculate_node(&n.terrain, &basic::swap_player(player), p, ai);
+		let child = calculate_node(&n.terrain, &basic::swap_player(player), p);
 		if child.terrain != n.terrain {
 			n.child.push(child);
 		}
@@ -145,4 +190,20 @@ pub fn get_node<'a>(parent : &'a Node, path : &Vec<usize>) -> &'a Node {
 		return parent;
 	}
 	get_node(&parent.child[path[0]], &path[1..].to_vec())
+}
+
+pub fn get_path<'a, 'b>(parent : &'a Node, target : &'b Node, path : &'a mut Vec<usize>, index : Option<usize>) {
+	if parent == target && index.is_some() {
+		path.insert(0,index.unwrap());
+	}
+	else {
+		for i in 0..parent.child.len() {
+			let size = path.len();
+			get_path(&parent.child[i], target, path, Some(i));
+			if size != path.len() && index.is_some() {		// A step has been added
+				path.insert(0,index.unwrap());
+				break;
+			}
+		}
+	}
 }

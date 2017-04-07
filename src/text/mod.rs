@@ -38,9 +38,9 @@ pub fn main(matches : clap::ArgMatches){
 	// ---
 
 	// Initialize the AI data
-	let mut ai_data : ai::Node = ai::Node {terrain : terrain, child : Vec::new(), player : player, win : ' ', play : (0,0)};
+	let mut ai_data = ai::NodeBuilder::new().player(player).terrain(terrain).finalize();
 	if play_mode {
-		ai_data = ai::begin(&player, &basic::swap_player(&player));
+		ai_data = ai::begin(&player);
 	}
 	let mut ai_played_node = Vec::new();
 	// ---
