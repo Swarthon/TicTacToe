@@ -3,6 +3,9 @@
 /// Enable the basic stuff coming from basic.rs which provide some basic functions as play and print_terrain
 use basic;
 
+use std::thread;
+use std::sync::mpsc::channel;
+
 /// Struct representing a Node
 ///
 /// The more basic part of the tree of plays composing the Tic Tac Toe Game
@@ -116,8 +119,18 @@ pub fn begin(player : &char) -> Node {
 	let terrain = [[' ';3];3];
 	let v : Vec<Node> = Vec::new();
 	let mut n = Node {terrain : terrain, child : v, player : *player, win : ' ', play : (0,0)};
+	let (tx,rx) = channel();
 	for p in 0..9 {
-		let child = calculate_node(&n.terrain, &n.player, p);
+		let tx = tx.clone();
+		let terrain = n.terrain;
+		let player = n.player;
+		thread::spawn(move|| {
+			let child = calculate_node(&terrain, &player, p);
+			tx.send(child).unwrap();
+		});
+	}
+	for q in 0..9 {
+		let child = rx.recv().unwrap();
 		n.child.push(child);
 	}
 	n

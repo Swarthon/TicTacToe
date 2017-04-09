@@ -55,6 +55,13 @@ pub fn main() {
 
 	while let Some(event) = window.next_event(&mut events) {
 		if let Some(e) = piston::window::convert_event(event.clone(), &window) {
+			if let conrod::event::Input::Release(btn) = e {
+				if let conrod::input::Button::Keyboard(key) = btn {
+					if key == conrod::input::Key::Escape {
+						*state = State::MainMenu;
+					}
+				}
+			}
 			ui.handle_event(e);
         	}
 
@@ -62,7 +69,7 @@ pub fn main() {
 			match *state {
 				State::MainMenu					=> main_menu::	update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
 				State::Multiplayer(player, terrain)		=> multiplayer::update(&window, &ids, &mut ui, &mut state, player, terrain),
-				State::Solo(player,terrain)			=> solo::	update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
+				State::Solo(_,_)				=> solo::	update(&window, &ids, &mut ui, &mut state, &mut node, &mut played_node),
 				State::End(winner)				=> end::	update(&window, &ids, &mut ui, &mut state, winner),
 			}
 		});

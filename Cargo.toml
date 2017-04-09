@@ -1,9 +1,9 @@
 [package]
 name = "tic_tac_toe"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Swarthon <swarthon.gokan@gmail.com>"]
 readme = "README.md"
-keywords = ["TicTacToe", "Game"]
+keywords = ["TicTacToe"]
 categories = ["games"]
 license = "GPL-3.0"
 description = "TicTacToe is a simple Tic Tac Toe game"
